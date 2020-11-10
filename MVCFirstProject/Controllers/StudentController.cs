@@ -12,10 +12,34 @@ namespace MVCFirstProject.Controllers
     {
         private SchoolContext db = new SchoolContext();
 
-        public ActionResult Index()
+        public ActionResult Index(string sortOrder)
         {
-            var students = db.Students.ToList();
-            return View(students);
+            var nameDesc = "name_desc";
+            var dateDesc = "date_desc";
+            var date = "Date";
+            ViewBag.NameSortOrder = string.IsNullOrEmpty(sortOrder) ? nameDesc : "";
+            ViewBag.DateSortOrder = sortOrder == date ? dateDesc : date;
+
+            var students = from s in db.Students select s;
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    students = students.OrderByDescending(s => s.LastName);
+                    break;
+                case "Date":
+                    students = students.OrderBy(s => s.EnrollmentDate);
+                    break;
+                case "date_desc":
+                    students = students.OrderByDescending(s => s.EnrollmentDate);
+                    break;
+                default:
+                    students = students.OrderBy(s => s.LastName);
+                    break;
+            }
+
+
+            
+            return View(students.ToList());
         }
 
         public ActionResult Details(int? id)

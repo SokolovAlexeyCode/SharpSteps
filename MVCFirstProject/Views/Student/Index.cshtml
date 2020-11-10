@@ -12,13 +12,14 @@
 <table>
     <tr>
         <th>
-            LastName
+            @Html.ActionLink("Last name", "Index", new {sortOrder = ViewBag.NameSortOrder })
         </th>
         <th>
             FirstMidName
         </th>
         <th>
-            EnrollmentDate
+            @Html.ActionLink("Enrollment date", "Index", new { sortOrder = ViewBag.DateSortOrder })
+            
         </th>
         <th></th>
     </tr>
