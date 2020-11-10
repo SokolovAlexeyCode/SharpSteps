@@ -5,6 +5,7 @@ using System.Net;
 using System.Web.Mvc;
 using MVCFirstProject.DAL;
 using MVCFirstProject.Models;
+using PagedList;
 
 namespace MVCFirstProject.Controllers
 {
@@ -12,13 +13,25 @@ namespace MVCFirstProject.Controllers
     {
         private SchoolContext db = new SchoolContext();
 
-        public ActionResult Index(string sortOrder, string searchString)
+        public ActionResult Index(string sortOrder, string searchString, string currentFilter, int? page)
         {
             var nameDesc = "name_desc";
             var dateDesc = "date_desc";
             var date = "Date";
+
+            ViewBag.CurrentSort = sortOrder;
             ViewBag.NameSortOrder = string.IsNullOrEmpty(sortOrder) ? nameDesc : "";
             ViewBag.DateSortOrder = sortOrder == date ? dateDesc : date;
+            ViewBag.CurrentFilter = searchString;
+
+            if (searchString != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
 
             var students = from s in db.Students select s;
 
@@ -44,9 +57,10 @@ namespace MVCFirstProject.Controllers
                     break;
             }
 
+            int pageSize = 3;
+            int pageNumber = page ?? 1;
 
-            
-            return View(students.ToList());
+            return View(students.ToPagedList(pageNumber, pageSize));
         }
 
         public ActionResult Details(int? id)

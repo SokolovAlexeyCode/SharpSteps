@@ -1,18 +1,19 @@
-﻿
-@model  IList<MVCFirstProject.Models.Student>
+﻿@model PagedList.IPagedList<MVCFirstProject.Models.Student>
+@using PagedList.Mvc;
+
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
-
 }
 
-<p>@Html.ActionLink("Create Student", "Create" )</p>
+<p>@Html.ActionLink("Create Student", "Create")</p>
 
 @using (Html.BeginForm("Index", "Student", FormMethod.Get))
 {
-    <p>Find by name: @Html.TextBox("SearchString") </p>
-    <input type="submit" value="Search"/>
+    <p>Find by name: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string) </p>
+    <input type="submit" value="Search" />
 }
 
 
@@ -20,14 +21,14 @@
 <table class="table">
     <tr>
         <th>
-            @Html.ActionLink("Last name", "Index", new {sortOrder = ViewBag.NameSortOrder })
+            @Html.ActionLink("Last name", "Index", new { sortOrder = ViewBag.NameSortOrder, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th>
             FirstMidName
         </th>
         <th>
-            @Html.ActionLink("Enrollment date", "Index", new { sortOrder = ViewBag.DateSortOrder })
-            
+            @Html.ActionLink("Enrollment date", "Index", new { sortOrder = ViewBag.DateSortOrder, currentFilter = ViewBag.CurrentFilter })
+
         </th>
         <th></th>
     </tr>
@@ -54,4 +55,9 @@
     }
 
 </table>
+
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("Index",
+    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
 
