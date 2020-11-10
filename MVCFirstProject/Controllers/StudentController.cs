@@ -12,7 +12,7 @@ namespace MVCFirstProject.Controllers
     {
         private SchoolContext db = new SchoolContext();
 
-        public ActionResult Index(string sortOrder)
+        public ActionResult Index(string sortOrder, string searchString)
         {
             var nameDesc = "name_desc";
             var dateDesc = "date_desc";
@@ -21,6 +21,13 @@ namespace MVCFirstProject.Controllers
             ViewBag.DateSortOrder = sortOrder == date ? dateDesc : date;
 
             var students = from s in db.Students select s;
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                students = students.Where(s =>
+                    s.LastName.Contains(searchString) || s.FirstMidName.Contains(searchString));
+            }
+
             switch (sortOrder)
             {
                 case "name_desc":
