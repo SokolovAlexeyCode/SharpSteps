@@ -86,7 +86,8 @@ namespace MVCFirstProject.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "LastName, FirstMidName, EnrollmentDate")] Student student)
+        public ActionResult Create([Bind(Include = "LastName, FirstMidName, EnrollmentDate")]
+            Student student)
         {
             try
             {
@@ -99,7 +100,7 @@ namespace MVCFirstProject.Controllers
             }
             catch (DataException dex)
             {
-               ModelState.AddModelError("",
+                ModelState.AddModelError("",
                     "Unable to save changes. " +
                     "Try again, and if the problem persists see your system administrator.");
             }
@@ -129,9 +130,10 @@ namespace MVCFirstProject.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             var studentToUpdate = db.Students.Find(id);
             if (TryUpdateModel(studentToUpdate, "",
-                new string[] { "LastName", "FirstMidName", "EnrollmentDate" }))
+                new string[] {"LastName", "FirstMidName", "EnrollmentDate"}))
             {
                 try
                 {
@@ -142,15 +144,17 @@ namespace MVCFirstProject.Controllers
                 catch (DataException /* dex */)
                 {
                     //Log the error (uncomment dex variable name and add a line here to write a log.
-                    ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists, see your system administrator.");
+                    ModelState.AddModelError("",
+                        "Unable to save changes. Try again, and if the problem persists, see your system administrator.");
                 }
             }
+
             return View(studentToUpdate);
         }
 
         public ActionResult Delete(int? id, bool? saveChangesError = false)
         {
-            if(id == null)
+            if (id == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
             if (saveChangesError.GetValueOrDefault())
@@ -175,7 +179,7 @@ namespace MVCFirstProject.Controllers
         {
             try
             {
-                var studentToDelete = new Student() { ID = id };
+                var studentToDelete = new Student() {ID = id};
                 db.Entry(studentToDelete).State = EntityState.Deleted;
             }
             catch (DataException /*dex*/)
@@ -185,5 +189,18 @@ namespace MVCFirstProject.Controllers
 
             return RedirectToAction("Index");
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+            }
+
+            base.Dispose(disposing);
+        }
     }
+
+    
+
 }
